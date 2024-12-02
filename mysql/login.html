@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="CSS/login.css">
+    <script src="javascript/login.js" defer></script>
+    <script src="mysql/config.js" defer></script>
+    <script src="mysql/db.js" defer></script>
+    <script src="mysql/users.js" defer></script>
+    <script src="javascript/loginserver.js" defer></script>
+    <script src="javascript/dashboard.js" defer></script>
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+    <header>
+        <img src="logo/logo1.png" alt="Logo">
+    </header>
+    <div class="container">
+        <div class="login-form">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">Log In</button>
+                </div>
+
+                <!-- Fingerprint Login Button -->
+                <div class="form-group">
+                    <button type="button" onclick="loginWithFingerprint()">Log In with Fingerprint</button>
+                </div>
+            </form>
+            <div class="additional-options">
+                <a href="forget-password.html">Forgot your password?</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <nav>
+            <a href="signup.html">Signup</a>
+            <a href="Home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <p>&copy; 2024 Aryan Kaushik. All rights reserved.</p>
+    </footer>
+
+    <!-- WebAuthn Fingerprint Login Script -->
+    <script>
+        var count=0;
+        function RDService()
+        {
+        
+          var url = "http://127.0.0.1:11100";
+        
+          var xhr;
+          var ua = window.navigator.userAgent;
+          var msie = ua.indexOf("MSIE ");
+        
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) // If Internet Explorer, return version number
+            {
+                //IE browser
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            } else {
+                //other browser
+                xhr = new XMLHttpRequest();
+            }
+                
+            xhr.open('RDSERVICE', url, false);
+        
+             xhr.onreadystatechange = function () {
+            // if(xhr.readyState == 1 && count == 0){
+            //	fakeCall();
+            //}
+            if (xhr.readyState == 4){
+                    var status = xhr.status;
+        
+                    if (status == 200) {
+        
+                        alert(xhr.responseText);
+                        
+                        //Capture();                   //Call Capture() here if FingerPrint Capture is required inside RDService() call           
+                        console.log(xhr.response);
+        
+                    } else {
+                        
+                        console.log(xhr.response);
+        
+                    }
+                    }
+        
+                };
+        
+             /*setTimeout(function(){
+             xhr.send();},1000);*/
+             xhr.send();
+        }
+        
+        
+        function DeviceInfo()
+        {
+        
+          var url = "http://127.0.0.1:11100/getDeviceInfo";
+        
+                 var xhr;
+                    var ua = window.navigator.userAgent;
+                    var msie = ua.indexOf("MSIE ");
+        
+                    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) // If Internet Explorer, return version number
+                    {
+                        //IE browser
+                        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+                    } else {
+                        //other browser
+                        xhr = new XMLHttpRequest();
+                    }
+                
+                //
+                xhr.open('DEVICEINFO', url, true);
+        
+                 xhr.onreadystatechange = function () {
+                // if(xhr.readyState == 1 && count == 0){
+                //	fakeCall();
+                //}
+                if (xhr.readyState == 4){
+                    var status = xhr.status;
+        
+                    if (status == 200) {
+        
+                        alert(xhr.responseText);
+                                    
+                        console.log(xhr.response);
+        
+                    } else 
+                    {
+                        
+                        console.log(xhr.response);
+        
+                    }
+                    }
+        
+                };
+        
+             xhr.send();
+        
+        
+        }
+        
+        function Capture()
+        {
+        
+          var url = "http://127.0.0.1:11100/capture";
+        
+           var PIDOPTS='<PidOptions ver=\"1.0\">'+'<Opts fCount=\"1\" fType=\"0\" iCount=\"\" iType=\"\" pCount=\"\" pType=\"\" format=\"0\" pidVer=\"2.0\" timeout=\"10000\" otp=\"\" wadh=\"\" posh=\"\"/>'+'</PidOptions>';
+         
+          
+         var xhr;
+                    var ua = window.navigator.userAgent;
+                    var msie = ua.indexOf("MSIE ");
+        
+                    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) // If Internet Explorer, return version number
+                    {
+                        //IE browser
+                        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+                    } else {
+                        //other browser
+                        xhr = new XMLHttpRequest();
+                    }
+                
+                xhr.open('CAPTURE', url, true);
+                xhr.setRequestHeader("Content-Type","text/xml");
+                xhr.setRequestHeader("Accept","text/xml");
+        
+                xhr.onreadystatechange = function () {
+                //if(xhr.readyState == 1 && count == 0){
+                //	fakeCall();
+                //}
+        if (xhr.readyState == 4){
+                    var status = xhr.status;
+                    //parser = new DOMParser();
+                    if (status == 200) {
+                    var test1=xhr.responseText;
+                    var test2=test1.search("errCode");
+                    var test6=getPosition(test1, '"', 2);
+                    var test4=test2+9;
+                    var test5=test1.slice(test4, test6);
+                    if (test5>0)
+                    {
+                    alert(xhr.responseText);
+                    //document.getElementById('text').value = xhr.responseText;
+                    }
+                    else
+                    {
+                    alert("Captured Successfully");
+                    //document.getElementById('text').value = "Captured Successfully";
+                    }
+        
+        
+                    } else 
+                    {
+                        
+                        console.log(xhr.response);
+        
+                    }
+                    }
+        
+                };
+        
+                xhr.send(PIDOPTS);
+            
+        }
+        
+        function getPosition(string, subString, index) {
+          return string.split(subString, index).join(subString).length;
+        }
+        
+        function fakeCall(){
+         var xhr1;
+          var url = 'http://127.0.0.1:11100/getDeviceInfo';
+        
+                    var ua = window.navigator.userAgent;
+                    var msie = ua.indexOf("MSIE ");
+        
+                    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) // If Internet Explorer, return version number
+                    {
+                        //IE browser
+                        xhr1 = new ActiveXObject("Microsoft.XMLHTTP");
+                    } else {
+                        //other browser
+                        xhr1 = new XMLHttpRequest();
+                    }
+                
+                xhr1.open('DEVICEINFO', url, true);
+                xhr1.send(); 
+                count =1;
+                xhr1.onreadystatechange = function () {
+                if(xhr1.readyState == 4){
+                    xhr1.abort();
+                }
+                };
+        }
+        
+        
+        </script>
+        
+</body>
+
+</html>

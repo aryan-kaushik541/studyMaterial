@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <img src="logo/logo1.png" alt="Logo">
+        <h1>Welcome to the Dashboard</h1>
+    </header>
+
+    <div class="container">
+        <h2>Dashboard Content</h2>
+        <p>Welcome, you have successfully logged in!</p>
+    </div>
+
+    <footer>
+        <nav>
+            <a href="services.html">Services</a>
+            <a href="logout.html">Logout</a>
+        </nav>
+        <p>&copy; 2024 Aryan Kaushik. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript code to handle AJAX requests -->
+    <script>
+        // Using jQuery AJAX with FormData
+        const form = new FormData();
+        form.append('api_key', '394e9338b73a9f061b1968ceaa050a');
+        form.append('email', 'test@email.com');
+        form.append('password', 'Qwerty_12345');
+
+        const settings = {
+            async: true,
+            crossDomain: true,
+            url: 'https://login-signup.p.rapidapi.com/public/v1/login.php',
+            method: 'POST',
+            headers: {
+                'x-rapidapi-key': '778c412ef9msh6b90d95eaf20661p1c17e7jsn20233ea18834',
+                'x-rapidapi-host': 'login-signup.p.rapidapi.com',
+                Origin: 'http://127.0.0.1'
+            },
+            processData: false,
+            contentType: false,
+            mimeType: 'multipart/form-data',
+            data: form
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log('Login Response:', response);
+        });
+
+        // Using XMLHttpRequest for GET request
+        const data = null;
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener('readystatechange', function () {
+            if (this.readyState === this.DONE) {
+                console.log('Instagram Profile Response:', this.responseText);
+            }
+        });
+
+        xhr.open('GET', 'https://instagram-looter2.p.rapidapi.com/profile?id=18527');
+        xhr.setRequestHeader('x-rapidapi-key', '778c412ef9msh6b90d95eaf20661p1c17e7jsn20233ea18834');
+        xhr.setRequestHeader('x-rapidapi-host', 'instagram-looter2.p.rapidapi.com');
+
+        xhr.send(data);
+    </script>
+</body>
+</html>

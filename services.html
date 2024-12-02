@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services</title>
+    <link rel="stylesheet" href="CSS/services.css"> 
+    <link rel="stylesheet" href="CSS/service.css"> 
+</head>
+<body>
+    <header>
+        <img src="logo/logo1.png" alt="Logo">
+    </header>
+    <div class="container">
+        <div class="main-content">
+            <h2 id="content">Services</h2>
+            <p>Welcome to the study material library. Here you can upload and view your PDFs.</p>
+
+            <!-- PDF Upload Form -->
+            <form id="uploadForm">
+                <input type="file" id="fileInput" accept="application/pdf" required>
+                <button type="submit">Upload PDF</button>
+            </form>
+
+            <div id="uploadedBooks">
+                <h3>Uploaded Books</h3>
+                <ul id="bookList"></ul>
+            </div>
+
+            <!-- PDF Viewer -->
+            <div id="pdfViewer">
+                <!-- All pages will be rendered here -->
+            </div>
+        </div>
+    </div>
+    <footer>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="logout.html">logout</a>
+        </nav>
+        <p>&copy; 2024 Aryan Kaushik. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+       
+
+        // Unsplash API endpoint for random images
+        const unsplashUrl = 'https://api.unsplash.com/photos/random';
+const accessKey = 'YOUR_UNSPLASH_ACCESS_KEY'; // Replace with your Unsplash API key
+
+async function fetchRandomBookImage() {
+    try {
+        const response = await fetch(`${unsplashUrl}?query=book&client_id=${accessKey}`);
+        const data = await response.json();
+        const imageUrl = data.urls.regular; // you can choose from small, regular, full, etc.
+        console.log("Random Book Image URL:", imageUrl);
+        return imageUrl;
+    } catch (error) {
+        console.error("Error fetching image:", error);
+    }
+}
+
+// Call the function to get a random book image URL
+fetchRandomBookImage();
+
+
+        var uploadedFiles = [];
+
+        // Handle PDF upload
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+
+            if (file) {
+                uploadedFiles.push(file);
+
+                var listItem = document.createElement('li');
+                listItem.textContent = file.name;
+
+                // Fetch a random book-related image from Unsplash
+                var bookLogo = document.createElement('img');
+                bookLogo.src = unsplashUrl; // This URL will return a random book-related image
+                bookLogo.classList.add('book-logo');
+                bookLogo.onclick = function() {
+                    viewPDF(file);
+                };
+
+                listItem.appendChild(bookLogo);
+                document.getElementById('bookList').appendChild(listItem);
+                fileInput.value = '';
+            }
+        });
+
+        // Function to view all pages of a PDF
+        function viewPDF(file) {
+            var fileReader = new FileReader();
+            fileReader.onload = function() {
+                var typedarray = new Uint8Array(this.result);
+                pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+                    var viewer = document.getElementById('pdfViewer');
+                    viewer.innerHTML = ''; // Clear the previous content
+                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                        pdf.getPage(pageNum).then(function(page) {
+                            var canvas = document.createElement('canvas');
+                            var context = canvas.getContext('2d');
+                            viewer.appendChild(canvas);
+
+                            var viewport = page.getViewport({ scale: 1 });
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            page.render({ canvasContext: context, viewport: viewport });
+                        });
+                    }
+                    viewer.style.display = 'block'; // Show the viewer
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+        
+
+    </script>
+</body>
+</html>

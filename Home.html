@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/styl.css">
+</head>
+<body>
+    <header>
+        <img src="logo/logo1.png" alt="Logo">
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <h2 style="font-size: 30px;" class="content" id="content">Home</h2>
+            <p>Welcome to the study material library. Here you can find resources to enhance your learning.</p>
+
+            <!-- Section to display books -->
+            <div id="book-list">
+                <h3>Available Books</h3>
+                <div id="books"></div> <!-- This is where the books will be inserted -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <nav>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Signup</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <p>&copy; 2024 Aryan Kaushik. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to fetch books from API
+        function fetchBooks() {
+            fetch('https://www.dbooks.org/api/search/{query}')  // Replace with your actual API endpoint
+                .then(response => response.json())
+                .then(data => {
+                    // Call function to display books
+                    displayBooks(data.books);  // Passing books array from the API response
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                    document.getElementById('books').innerHTML = 'Failed to load books.';
+                });
+        }
+
+        function fetchPopularBooks() {
+            fetch('https://www.dbooks.org/api/recent')  // Replace with your actual API endpoint
+                .then(response => response.json())
+                .then(data => {
+                    displayBooks(data.books, 'popular-books-list');
+                })
+                .catch(error => {
+                    console.error('Error fetching popular books:', error);
+                    document.getElementById('popular-books-list').innerHTML = 'Failed to load popular books.';
+                });
+        }
+
+        // Function to display books on the page
+        function displayBooks(books) {
+            const booksContainer = document.getElementById('books');
+            booksContainer.innerHTML = '';  // Clear any existing content
+
+            // Loop through the books and create HTML elements for each
+            books.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.classList.add('book');
+
+                bookElement.innerHTML = `
+                    <img src="${book.image}" alt="${book.title}" class="book-image">
+                    <h4>${book.title}</h4>
+                    <h5>${book.subtitle || 'No subtitle available'}</h5>
+                    <p><strong>Author(s):</strong> ${book.authors}</p>
+                    <a href="${book.url}" target="_blank">Read More</a>
+                `;
+
+                booksContainer.appendChild(bookElement);
+            });
+        }
+
+        // Call the fetchBooks function when the page loads
+        window.onload = fetchBooks;
+    </script>
+</body>
+</html>
